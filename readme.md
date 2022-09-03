@@ -1,3 +1,3 @@
-# Pupeteer Monkeytype Hack
+# Pupeteer MonkeyType Hack
 
 LMFAO KEN IF YOU ARE SEEING THIS GET DESTROYED AHAHAHA
