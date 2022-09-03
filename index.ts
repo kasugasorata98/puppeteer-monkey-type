@@ -14,7 +14,6 @@ function sleep(ms: number) {
 async function main() {
     const browser = await puppeteer.launch({
         headless: false,
-        ignoreDefaultArgs: ["--enable-automation"],
         defaultViewport: null
     });
     const page = await browser.newPage();
