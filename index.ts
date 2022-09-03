@@ -13,7 +13,9 @@ function sleep(ms: number) {
 
 async function main() {
     const browser = await puppeteer.launch({
-        headless: false
+        headless: false,
+        ignoreDefaultArgs: ["--enable-automation"],
+        defaultViewport: null
     });
     const page = await browser.newPage();
     await page.goto("https://monkeytype.com/", { waitUntil: "networkidle2", timeout: 0 });
