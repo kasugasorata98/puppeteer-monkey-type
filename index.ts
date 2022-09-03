@@ -1,6 +1,6 @@
 import * as puppeteer from 'puppeteer';
 
-const typingDelay = 75;
+const typingDelay = 0;
 // 129 wpm = 75ms
 
 function sleep(ms: number) {
