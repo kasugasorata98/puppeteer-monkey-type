@@ -4,12 +4,12 @@ const TYPING_RANGE_DELAY: {  // 129 wpm = 75ms
     MIN: number,
     MAX: number
 } = {
-    MIN: 120,
-    MAX: 150
+    MIN: 70,
+    MAX: 80
 }
 const MISTAKE_CHANCE = 10; // 10% chance of making mistake
 
-function sleep(ms: number) {
+function sleep(ms: number): Promise<void> {
     return new Promise<void>(resolve => {
         setTimeout(() => {
             resolve()
@@ -21,7 +21,7 @@ function randomNumberGivenRange(): number {
     return Math.floor(Math.random() * (TYPING_RANGE_DELAY.MAX - TYPING_RANGE_DELAY.MIN + 1) + TYPING_RANGE_DELAY.MIN)
 }
 
-function shouldMakeIntentionalMistake() {
+function shouldMakeIntentionalMistake(): boolean {
     const random = Math.random() * 100;
     if (random < MISTAKE_CHANCE) return true;
     return false;
