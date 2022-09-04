@@ -1,12 +1,11 @@
 import * as puppeteer from 'puppeteer';
-import randomWords from 'random-words';
 
 const TYPING_RANGE_DELAY: {  // 129 wpm = 75ms
-    min: number,
-    max: number
+    MIN: number,
+    MAX: number
 } = {
-    min: 60,
-    max: 70
+    MIN: 65,
+    MAX: 70
 }
 const MISTAKE_CHANCE = 10; // 10% chance of making mistake
 
@@ -19,7 +18,7 @@ function sleep(ms: number) {
 }
 
 function randomNumberGivenRange(): number {
-    return Math.floor(Math.random() * (TYPING_RANGE_DELAY.max - TYPING_RANGE_DELAY.min + 1) + TYPING_RANGE_DELAY.min)
+    return Math.floor(Math.random() * (TYPING_RANGE_DELAY.MAX - TYPING_RANGE_DELAY.MIN + 1) + TYPING_RANGE_DELAY.MIN)
 }
 
 function shouldMakeIntentionalMistake() {
@@ -28,12 +27,12 @@ function shouldMakeIntentionalMistake() {
     return false;
 }
 
-async function makeIntentionalMistake(page: puppeteer.Page) {
-    const randomWord: string = randomWords(1)[0];
-    await page.type("#wordsWrapper", randomWord, {
+async function makeIntentionalMistake(page: puppeteer.Page, word: string) {
+    const shuffled = word.split('').sort(function () { return 0.5 - Math.random() }).join('');
+    await page.type("#wordsWrapper", shuffled, {
         delay: randomNumberGivenRange()
     });
-    for (let i = 0; i < randomWord.length; i++) {
+    for (let i = 0; i < shuffled.length; i++) {
         await page.keyboard.press('Backspace');
     }
 }
@@ -50,23 +49,18 @@ async function main() {
 
     await sleep(500);
     while (true) {
-        const letters: string[] = await page.evaluate(() => {
+        const word: string = await page.evaluate(() => {
             const letterElements = document.querySelectorAll('.word.active')
-            let letterList: string[] = []
+            let word: string = '';
             letterElements.forEach(letter => {
-                letterList.push((letter as HTMLElement).innerText);
+                word += (letter as HTMLElement).innerText
             })
-            return letterList;
+            return word;
         })
-        if (letters.length === 0) break;
-        console.dir(letters, { 'maxArrayLength': null });
-        shouldMakeIntentionalMistake() && await makeIntentionalMistake(page);
-        for (const letter of letters) {
-            await page.type("#wordsWrapper", letter, {
-                delay: randomNumberGivenRange()
-            });
-        }
-        await page.type("#wordsWrapper", " ", {
+        if (word.length === 0) break;
+        console.log(word);
+        shouldMakeIntentionalMistake() && await makeIntentionalMistake(page, word);
+        await page.type("#wordsWrapper", word + " ", {
             delay: randomNumberGivenRange()
         });
     }
