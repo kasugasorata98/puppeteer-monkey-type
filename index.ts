@@ -4,8 +4,8 @@ const TYPING_RANGE_DELAY: {  // 129 wpm = 75ms
     MIN: number,
     MAX: number
 } = {
-    MIN: 65,
-    MAX: 70
+    MIN: 0,
+    MAX: 150
 }
 const MISTAKE_CHANCE = 10; // 10% chance of making mistake
 
@@ -46,7 +46,7 @@ async function main() {
     await page.goto("https://monkeytype.com/", { waitUntil: "networkidle2", timeout: 0 });
     await page.waitForSelector('.button.active.acceptAll')
     await page.click('.button.active.acceptAll')
-
+    console.log('[Starting Challenge]')
     await sleep(500);
     while (true) {
         const word: string = await page.evaluate(() => {
@@ -58,13 +58,13 @@ async function main() {
             return word;
         })
         if (word.length === 0) break;
-        console.log(word);
+        console.log('-> Typing: ' + word);
         shouldMakeIntentionalMistake() && await makeIntentionalMistake(page, word);
         await page.type("#wordsWrapper", word + " ", {
             delay: randomNumberGivenRange()
         });
     }
-    console.log('Challenge completed')
+    console.log('[Challenge Complete]')
 }
 
 main();
