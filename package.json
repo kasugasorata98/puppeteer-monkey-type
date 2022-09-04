@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^17.1.0"
+    "puppeteer": "^17.1.0",
+    "random-words": "^1.2.0"
   }
 }

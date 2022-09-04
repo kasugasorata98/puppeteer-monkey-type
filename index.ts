@@ -1,7 +1,14 @@
 import * as puppeteer from 'puppeteer';
+import randomWords from 'random-words';
 
-const typingDelay = 0;
-// 129 wpm = 75ms
+const TYPING_RANGE_DELAY: {  // 129 wpm = 75ms
+    min: number,
+    max: number
+} = {
+    min: 60,
+    max: 70
+}
+const MISTAKE_CHANCE = 10; // 10% chance of making mistake
 
 function sleep(ms: number) {
     return new Promise<void>(resolve => {
@@ -9,6 +16,26 @@ function sleep(ms: number) {
             resolve()
         }, ms)
     })
+}
+
+function randomNumberGivenRange(): number {
+    return Math.floor(Math.random() * (TYPING_RANGE_DELAY.max - TYPING_RANGE_DELAY.min + 1) + TYPING_RANGE_DELAY.min)
+}
+
+function shouldMakeIntentionalMistake() {
+    const random = Math.random() * 100;
+    if (random < MISTAKE_CHANCE) return true;
+    return false;
+}
+
+async function makeIntentionalMistake(page: puppeteer.Page) {
+    const randomWord: string = randomWords(1)[0];
+    await page.type("#wordsWrapper", randomWord, {
+        delay: randomNumberGivenRange()
+    });
+    for (let i = 0; i < randomWord.length; i++) {
+        await page.keyboard.press('Backspace');
+    }
 }
 
 async function main() {
@@ -20,6 +47,7 @@ async function main() {
     await page.goto("https://monkeytype.com/", { waitUntil: "networkidle2", timeout: 0 });
     await page.waitForSelector('.button.active.acceptAll')
     await page.click('.button.active.acceptAll')
+
     await sleep(500);
     while (true) {
         const letters: string[] = await page.evaluate(() => {
@@ -32,13 +60,14 @@ async function main() {
         })
         if (letters.length === 0) break;
         console.dir(letters, { 'maxArrayLength': null });
+        shouldMakeIntentionalMistake() && await makeIntentionalMistake(page);
         for (const letter of letters) {
             await page.type("#wordsWrapper", letter, {
-                delay: typingDelay
+                delay: randomNumberGivenRange()
             });
         }
         await page.type("#wordsWrapper", " ", {
-            delay: typingDelay
+            delay: randomNumberGivenRange()
         });
     }
     console.log('Challenge completed')
