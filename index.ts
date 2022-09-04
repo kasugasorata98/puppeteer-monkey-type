@@ -4,7 +4,7 @@ const TYPING_RANGE_DELAY: {  // 129 wpm = 75ms
     MIN: number,
     MAX: number
 } = {
-    MIN: 0,
+    MIN: 120,
     MAX: 150
 }
 const MISTAKE_CHANCE = 10; // 10% chance of making mistake
@@ -29,9 +29,11 @@ function shouldMakeIntentionalMistake() {
 
 async function makeIntentionalMistake(page: puppeteer.Page, word: string) {
     const shuffled = word.split('').sort(function () { return 0.5 - Math.random() }).join('');
+    console.log('-> [Mistake]: ' + shuffled);
     await page.type("#wordsWrapper", shuffled, {
         delay: randomNumberGivenRange()
     });
+    console.log('-> [Recover From Mistake]')
     for (let i = 0; i < shuffled.length; i++) {
         await page.keyboard.press('Backspace');
     }
@@ -58,7 +60,7 @@ async function main() {
             return word;
         })
         if (word.length === 0) break;
-        console.log('-> Typing: ' + word);
+        console.log('-> [Typing]: ' + word);
         shouldMakeIntentionalMistake() && await makeIntentionalMistake(page, word);
         await page.type("#wordsWrapper", word + " ", {
             delay: randomNumberGivenRange()
