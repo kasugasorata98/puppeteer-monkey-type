@@ -23,7 +23,7 @@ function randomNumberGivenRange(): number {
 
 function shouldMakeIntentionalMistake(): boolean {
     const random = Math.random() * 100;
-    if (random < MISTAKE_CHANCE) return true;
+    if (random <= MISTAKE_CHANCE) return true;
     return false;
 }
 
