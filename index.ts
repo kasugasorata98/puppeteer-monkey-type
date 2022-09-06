@@ -27,27 +27,38 @@ function shouldMakeIntentionalMistake(): boolean {
     return false;
 }
 
+async function recoverFromMistake(page: puppeteer.Page, backSpaceAmount: number): Promise<void> {
+    console.log('-> [Recover From Mistake]')
+    for (let i = 0; i < backSpaceAmount; i++) {
+        await page.keyboard.press('Backspace');
+    }
+}
+
 async function makeIntentionalMistake(page: puppeteer.Page, word: string) {
     const shuffled = word.split('').sort(function () { return 0.5 - Math.random() }).join('');
     console.log('-> [Mistake]: ' + shuffled);
     await page.type("#wordsWrapper", shuffled, {
         delay: randomNumberGivenRange()
     });
-    console.log('-> [Recover From Mistake]')
-    for (let i = 0; i < shuffled.length; i++) {
-        await page.keyboard.press('Backspace');
-    }
 }
 
-async function main() {
+async function launchPuppeteer(): Promise<puppeteer.Page> {
     const browser = await puppeteer.launch({
         headless: false,
         defaultViewport: null
     });
     const page = await browser.newPage();
     await page.goto("https://monkeytype.com/", { waitUntil: "networkidle2", timeout: 0 });
+    return page;
+}
+
+async function handleAcceptCookiesBtn(page: puppeteer.Page): Promise<void> {
     await page.waitForSelector('.button.active.acceptAll')
     await page.click('.button.active.acceptAll')
+}
+
+async function startChallenge(page: puppeteer.Page): Promise<void> {
+    await handleAcceptCookiesBtn(page);
     console.log('[Starting Challenge]')
     await sleep(500);
     while (true) {
@@ -61,12 +72,17 @@ async function main() {
         })
         if (word.length === 0) break;
         console.log('-> [Typing]: ' + word);
-        shouldMakeIntentionalMistake() && await makeIntentionalMistake(page, word);
+        shouldMakeIntentionalMistake() && await makeIntentionalMistake(page, word).then(async () => await recoverFromMistake(page, word.length));
         await page.type("#wordsWrapper", word + " ", {
             delay: randomNumberGivenRange()
         });
     }
     console.log('[Challenge Complete]')
+}
+
+async function main() {
+    const page = await launchPuppeteer();
+    await startChallenge(page);
 }
 
 main();
