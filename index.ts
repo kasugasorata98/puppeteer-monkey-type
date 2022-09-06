@@ -34,7 +34,7 @@ async function recoverFromMistake(page: puppeteer.Page, backSpaceAmount: number)
     }
 }
 
-async function makeIntentionalMistake(page: puppeteer.Page, word: string) {
+async function makeIntentionalMistake(page: puppeteer.Page, word: string): Promise<void> {
     const shuffled = word.split('').sort(function () { return 0.5 - Math.random() }).join('');
     console.log('-> [Mistake]: ' + shuffled);
     await page.type("#wordsWrapper", shuffled, {
