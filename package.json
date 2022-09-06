@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "start": "ts-node index.ts",
     "dev": "nodemon --exec ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jeromy Kho",
   "license": "ISC",
   "dependencies": {
     "puppeteer": "^17.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.2",
+    "nodemon": "^2.0.19"
   }
 }
