@@ -8,7 +8,7 @@ This project was solely meant to cheat in a typing race website called Monkey Ty
 
 - Uses puppeteer for webscraping and automation.
 - Intentionally makes mistakes with rate.
-- Recovers from its intentional mistakes
+- Recovers from its intentional mistakes.
 - Capable of typing faster than 145WPM.
 
 ## Tech
