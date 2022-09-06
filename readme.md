@@ -1,4 +1,4 @@
-# Pupeteer Monkeytype Hack
+# Pupeteer MonkeyType
 
 ## Destroyed a colleague with this script
 
